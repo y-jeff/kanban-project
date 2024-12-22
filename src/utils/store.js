@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create } from "zustand"; // Importar correctamente
 
 const useStore = create((set) => ({
   columns: [
@@ -15,8 +15,6 @@ const useStore = create((set) => ({
       tasks: [],
     },
   ],
-  isDragging: false, // Estado para el drag and drop
-  setDragging: (isDragging) => set({ isDragging }),
   addTask: (task) =>
     set((state) => ({
       columns: state.columns.map((col) =>

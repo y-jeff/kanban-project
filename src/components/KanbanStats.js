@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { useTranslation } from "react-i18next";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -12,44 +11,38 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { useTranslation } from "react-i18next";
 import useStore from "../utils/store";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function KanbanStats() {
-  const { columns } = useStore();
   const { t } = useTranslation();
+  const { columns } = useStore();
+
+  // Calcular cuántas tareas hay en cada columna
+  const taskCounts = columns.map((column) => ({
+    id: column.id,
+    title: t(`columns.${column.id}`),
+    count: column.tasks.length,
+  }));
 
   // Configuración de los datos del gráfico
   const data = {
-    labels: columns.map((col) => t(`columns.${col.id}`)),
+    labels: taskCounts.map((col) => col.title), 
     datasets: [
       {
-        label: t("chart.tasks"),
-        data: columns.map((col) => col.tasks.length), // Longitud de las tareas en cada columna
-        backgroundColor: ["#4caf50", "#ff9800", "#f44336"], // Verde, naranja, rojo
+        label: t("chart.task"), 
+        data: taskCounts.map((col) => col.count), 
+        backgroundColor: ["#ff6384", "#ffcd56", "#4bc0c0"], 
       },
     ],
   };
 
-  // Opciones del gráfico
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top",
-      },
-      title: {
-        display: true,
-        text: t("chart.title"),
-      },
-    },
-  };
-
   return (
-    <div className="bg-gray-100 p-4 rounded shadow-md mt-4">
+    <div className="bg-white p-4 rounded shadow-md">
       <h2 className="text-xl font-bold mb-4">{t("chart.title")}</h2>
-      <Bar data={data} options={options} />
+      <Bar data={data} />
     </div>
   );
 }

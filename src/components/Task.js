@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 export default function Task({ task, onEdit, onDelete }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useDraggable({
-      id: task.id.toString(), // ID único para la tarea
+      id: task.id.toString(),
     });
   const { t } = useTranslation();
 
@@ -18,8 +18,14 @@ export default function Task({ task, onEdit, onDelete }) {
     transition,
   };
 
-  const handleDelete = (e) => {
-    e.stopPropagation(); // Evita el evento de arrastre al interactuar con el botón
+  // Colores basados en prioridad
+  const priorityClass = {
+    high: "bg-red-500",
+    medium: "bg-yellow-500",
+    low: "bg-green-500",
+  }[task.priority] || "bg-gray-300";
+
+  const handleDelete = () => {
     Swal.fire({
       title: t("actions.confirmDelete"),
       text: t("actions.deleteTaskWarning"),
@@ -37,32 +43,28 @@ export default function Task({ task, onEdit, onDelete }) {
     });
   };
 
-  const handleEdit = (e) => {
-    e.stopPropagation(); // Evita el evento de arrastre al interactuar con el botón
-    onEdit();
-  };
-
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...listeners}
       {...attributes}
-      className="bg-white p-4 rounded shadow-md flex justify-between items-center"
+      className={`${priorityClass} p-4 rounded shadow-md flex flex-col space-y-2`}
     >
       <p>{task.name}</p>
+      <p className="text-sm text-white">{t(`priority.${task.priority}`)}</p>
       <div className="flex space-x-2">
         <button
-          onClick={handleEdit}
-          onPointerDown={(e) => e.stopPropagation()} // Evita el evento de arrastre
-          className="bg-yellow-500 text-white px-2 py-1 rounded"
+          onClick={onEdit}
+          onPointerDown={(e) => e.stopPropagation()}
+          className="bg-blue-500 text-white px-2 py-1 rounded"
         >
           ✏️ {t("actions.editTask")}
         </button>
         <button
           onClick={handleDelete}
-          onPointerDown={(e) => e.stopPropagation()} // Evita el evento de arrastre
-          className="bg-red-500 text-white px-2 py-1 rounded"
+          onPointerDown={(e) => e.stopPropagation()}
+          className="bg-gray-800 text-white px-2 py-1 rounded"
         >
           🗑️ {t("actions.deleteTask")}
         </button>
